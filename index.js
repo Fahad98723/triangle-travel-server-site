@@ -22,6 +22,7 @@ async function run () {
         const placesCollection = database.collection("places");
         const bookingCollection = database.collection("booking");
 
+        //booking data send on database
         app.post ('/booking', async (req, res) => {
             const data = req.body
             const bookedUser = {
@@ -38,6 +39,7 @@ async function run () {
             res.json(bookedResult)
 
         })
+        //places data send on database
         app.post('/places', async (req, res) => {
             const data = req.body
             console.log(data);
@@ -53,6 +55,7 @@ async function run () {
             res.json(places)
         })
 
+        //delete booking data from database
         app.delete('/booking/:id', async (req, res) => {
             const id = req.params.id
             const query = {_id : ObjectId(id)}
@@ -60,6 +63,7 @@ async function run () {
             res.json(result)
         })
 
+        //booking status change from data base
         app.put('/booking/:id' , async (req, res) => {
             const id = req.params.id
             console.log('updating ', id);
@@ -81,26 +85,21 @@ async function run () {
             const result = await bookingCollection.updateOne(filter, updateBooking,option)
             res.json(result)
         })
+        //bookings data get from server
         app.get('/booking', async (req, res) => {
             const cursor = bookingCollection.find({})
             const AllUserBooking = await cursor.toArray()
             res.send(AllUserBooking)
         })
 
-        // app.post('/myBooking/:byEmail', async (req, res) => {
-        //     const email = req.body
-        //     const query = {email : {$in:email}}
-        //     console.log(query);
-        //     const AllUserBooking = await bookingCollection.find(query).toArray()
-        //     res.json(AllUserBooking)
-        // })
-
+        //places data get from server
         app.get('/places', async (req, res) => {
             const cursor = placesCollection.find({})
             const places = await cursor.toArray()
             res.send(places)
         })
 
+        //places single data get from server by id 
         app.get('/places/:id', async (req,res) => {
             const id = req.params.id
             const query = {_id : ObjectId(id)}
