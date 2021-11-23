@@ -22,7 +22,7 @@ async function run () {
         const placesCollection = database.collection("places");
         const bookingCollection = database.collection("booking");
 
-        //booking data send on database
+        //booking data send on database ....
         app.post ('/booking', async (req, res) => {
             const data = req.body
             const bookedUser = {
