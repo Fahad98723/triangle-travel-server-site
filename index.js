@@ -139,6 +139,27 @@ async function run () {
             const users = await userCollection.find({}).toArray()
             res.send(users)
         })
+        
+        //places data get from server
+        app.get('/places', async (req, res) => {
+            const cursor = placesCollection.find({})
+            const places = await cursor.toArray()
+            res.send(places)
+        })
+
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query =  {email :  email}
+            const user = await userCollection.findOne(query)
+            let isAdmin = false
+            if (user?.role === 'admin') {
+                isAdmin = true
+            }
+            else{
+                isAdmin = false
+            }
+            res.send({admin : isAdmin})
+        })
    
         //if your data already had saved in the database then we don't want save it again
         app.put('/users', async(req, res) => {
