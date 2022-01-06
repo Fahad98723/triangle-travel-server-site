@@ -21,6 +21,7 @@ async function run () {
         const database = client.db("travel-booking");
         const placesCollection = database.collection("places");
         const bookingCollection = database.collection("booking");
+        const userCollection = database.collection("users");
 
         //booking data send on database ....
         app.post ('/booking', async (req, res) => {
@@ -99,6 +100,31 @@ async function run () {
             res.send(places)
         })
 
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email
+            const query =  {email :  email}
+            const user = await userCollection.findOne(query)
+            let isAdmin = false
+            if (user?.role === 'admin') {
+                isAdmin = true
+            }
+            else{
+                isAdmin = false
+            }
+            res.send({admin : isAdmin})
+        })
+         //making users admin 
+    app.put('/users/admin', async (req, res) => {
+        const data = req.body
+        const filter = {email : data.email}
+        const updateDoc = {
+            $set: {
+                role : 'admin'
+            },
+        }
+        const user = await userCollection.updateOne(filter, updateDoc);
+        res.json(user)
+    })
         //places single data get from server by id 
         app.get('/places/:id', async (req,res) => {
             const id = req.params.id
@@ -108,6 +134,24 @@ async function run () {
             res.send(place)
          })
 
+         //getting users from data base 
+        app.get('/users', async (req, res) => {
+            const users = await userCollection.find({}).toArray()
+            res.send(users)
+        })
+   
+        //if your data already had saved in the database then we don't want save it again
+        app.put('/users', async(req, res) => {
+            const data = req.body
+            const filter = {email : data.email}
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: data,
+            }
+            const user = await userCollection.updateOne(filter, updateDoc, options);
+            res.json(user)
+        })
+    
 
     }
     finally{
